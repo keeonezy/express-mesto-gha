@@ -31,6 +31,36 @@ const getUsers = async (req, res) => {
   }
 }
 
+// Возвращает пользователя по _id
+const getUserById = (req, res) => {
+  User.findById(req.params.userId)
+    .orFail(() => new Error('Not found')) // Мы попадаем сюда, когда ничего не найдено
+    .then((user) => res.status(STATUS_OK).send(user))
+    .catch((err) => {
+      if (err.message === 'Not found') {
+        res
+          .status(NOT_FOUND_ERROR)
+          .send({
+            message: 'User not found',
+          });
+      } else if (err.name === 'CastError') {
+        res
+          .status(BAD_REQUEST_ERROR)
+          .send({
+            message: 'Data is incorrect',
+          });
+      } else {
+        res
+          .status(INTERNAL_SERVER_ERROR)
+          .send({
+            message: 'Internal server error',
+            // err: err.message,
+            // stack: err.stack,
+          });
+      }
+    });
+};
+
 const createUser = (req, res) => {
   const { name, about, avatar } = req.body;
 
@@ -56,5 +86,6 @@ const createUser = (req, res) => {
 
 module.exports = {
   getUsers,
+  getUserById,
   createUser,
 };
