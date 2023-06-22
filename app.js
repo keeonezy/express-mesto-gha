@@ -2,17 +2,17 @@
 const express = require("express");
 // Для работы с БД
 const mongoose = require("mongoose");
-const router = require("./routes/index");
+const router = require("./routes");
+
+// Создаем сервер
+const app = express();
 
 // Устанавливаем порт
 const { PORT = 3000 } = process.env;
 
-mongoose.connect("mongodb://localhost:27017/mestodb", {
+mongoose.connect("mongodb://127.0.0.1:27017/mestodb", {
   useNewUrlParser: true,
 });
-
-// Создаем сервер
-const app = express();
 
 app.use(express.json());
 
