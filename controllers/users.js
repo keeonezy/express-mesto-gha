@@ -7,9 +7,31 @@ const {
   STATUS_CREATED,
   BAD_REQUEST_ERROR,
   NOT_FOUND_ERROR,
-  INTERNAL_SERVER_ERROR } = require("../utils/responseStatus")
+  INTERNAL_SERVER_ERROR } = require("../utils/responseStatus");
 
-const postUser = (req, res) => {
+const getUsers = async (req, res) => {
+  try {
+    // Ожидание ответа
+    const users = await User.find({});
+    res.status(STATUS_OK).send(users);
+  } catch (err) {
+    if (err.name === 'ValidationError') {
+      res.status(BAD_REQUEST_ERROR)
+        .send({
+          message: "Данные не корректны"
+        })
+    } else {
+      res.status(INTERNAL_SERVER_ERROR)
+        .send({
+          message: "Ошибка сервера",
+          err: err.message,
+          stack: err.stack,
+        })
+    }
+  }
+}
+
+const createUser = (req, res) => {
   const { name, about, avatar } = req.body;
 
   User.create({ name, about, avatar })
@@ -27,11 +49,12 @@ const postUser = (req, res) => {
             message: "Ошибка сервера",
             err: err.message,
             stack: err.stack,
-          });
+          })
       }
     })
 }
 
 module.exports = {
-  postUser,
+  getUsers,
+  createUser,
 };
