@@ -6,7 +6,7 @@ const {
   NOT_FOUND_ERROR,
   INTERNAL_SERVER_ERROR } = require("../utils/responseStatus");
 
-const getUsers = async (req, res) => {
+module.exports.getUsers = async (req, res) => {
   try {
     // Ожидание ответа
     const users = await User.find({});
@@ -28,21 +28,21 @@ const getUsers = async (req, res) => {
   }
 }
 
-const getUserById = (req, res) => {
+module.exports.getUserById = (req, res) => {
   User.findById(req.params.userId)
-    // Если не будет ничего найдено. Название Not Found не менять
+    // Если не будет ничего найдено. Название Not Found не менять т.к коды будут не корректно работать
     .orFail(() => new Error('Not found'))
     .then((user) => res.status(STATUS_OK).send(user))
     .catch((err) => {
       if (err.message === 'Not found') {
         res.status(NOT_FOUND_ERROR)
           .send({
-            message: "Данные не найдены 404"
+            message: "Данные не найдены"
           });
       } else if (err.name === 'CastError') {
         res.status(BAD_REQUEST_ERROR)
           .send({
-            message: "Объект не найден 400",
+            message: "Объект не найден",
           })
       } else {
         res.status(INTERNAL_SERVER_ERROR)
@@ -55,7 +55,7 @@ const getUserById = (req, res) => {
     })
 }
 
-const createUser = (req, res) => {
+module.exports.createUser = (req, res) => {
   const { name, about, avatar } = req.body;
 
   User.create({ name, about, avatar })
@@ -78,7 +78,7 @@ const createUser = (req, res) => {
     })
 }
 
-const updateUser = (req, res) => {
+module.exports.updateUser = (req, res) => {
   const { name, about } = req.body;
   const owner = req.user._id;
 
@@ -110,7 +110,7 @@ const updateUser = (req, res) => {
     })
 }
 
-const updateUserAvatar = (req, res) => {
+module.exports.updateUserAvatar = (req, res) => {
   const { avatar } = req.body;
   const owner = req.user._id;
 
@@ -141,11 +141,3 @@ const updateUserAvatar = (req, res) => {
       }
     })
 }
-
-module.exports = {
-  getUsers,
-  getUserById,
-  createUser,
-  updateUser,
-  updateUserAvatar,
-};

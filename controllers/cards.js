@@ -55,7 +55,7 @@ module.exports.createCard = (req, res) => {
 
 module.exports.deleteCardById = (req, res) => {
   Card.findByIdAndDelete(req.params.cardId)
-    // Если не будет ничего найдено
+    // Если не будет ничего найдено. Название Not Found не менять т.к коды будут не корректно работать т.к коды будут не корректно работать
     .orFail(() => new Error('Not found'))
     .then((card) => res.status(STATUS_OK).send(card))
     .catch((err) => {
@@ -88,7 +88,7 @@ module.exports.setLikeCard = (req, res) => {
     { $addToSet: { likes: owner } }, // добавить _id в массив, если его там нет
     { new: true },
   )
-    // Если не будет ничего найдено
+    // Если не будет ничего найдено. Название Not Found не менять т.к коды будут не корректно работать
     .orFail(() => new Error('Not found'))
     .then((card) => res.status(STATUS_OK).send(card))
     .catch((err) => {
@@ -121,7 +121,7 @@ module.exports.deleteLikeCard = (req, res) => {
     { $pull: { likes: owner } }, // убрать _id из массива
     { new: true },
   )
-    // Если не будет ничего найдено
+    // Если не будет ничего найдено. Название Not Found не менять т.к коды будут не корректно работать
     .orFail(() => new Error('Not found'))
     .then((card) => res.status(STATUS_OK).send(card))
     .catch((err) => {
