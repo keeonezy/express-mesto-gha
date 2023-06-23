@@ -55,7 +55,7 @@ module.exports.createCard = (req, res) => {
 
 module.exports.deleteCardById = (req, res) => {
   Card.findByIdAndDelete(req.params.cardId)
-    // Если не будет ничего найдено. Название Not Found не менять т.к коды будут не корректно работать т.к коды будут не корректно работать
+    // Если не будет ничего найдено. Название Not Found не менять т.к коды будут не корректно работать
     .orFail(() => new Error('Not found'))
     .then((card) => res.status(STATUS_OK).send(card))
     .catch((err) => {
