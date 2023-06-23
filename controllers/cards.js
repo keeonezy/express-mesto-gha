@@ -1,9 +1,10 @@
-const Card = require("../models/card");
+const Card = require('../models/card');
 const {
   STATUS_CREATED,
   BAD_REQUEST_ERROR,
   NOT_FOUND_ERROR,
-  INTERNAL_SERVER_ERROR } = require("../utils/responseStatus").default;
+  INTERNAL_SERVER_ERROR,
+} = require('../utils/responseStatus');
 
 module.exports.getCards = async (req, res) => {
   try {
@@ -13,10 +14,10 @@ module.exports.getCards = async (req, res) => {
   } catch (err) {
     res.status(INTERNAL_SERVER_ERROR)
       .send({
-        message: "Ошибка сервера",
-      })
+        message: 'Ошибка сервера',
+      });
   }
-}
+};
 
 module.exports.createCard = (req, res) => {
   const { name, link } = req.body;
@@ -27,44 +28,44 @@ module.exports.createCard = (req, res) => {
     // 201 статус должен быть успешным
     .then((card) => res.status(STATUS_CREATED).send(card))
     .catch((err) => {
-      if (err.name === "ValidationError") {
+      if (err.name === 'ValidationError') {
         res.status(BAD_REQUEST_ERROR)
           .send({
-            message: "Данные переданы не правильно"
+            message: 'Данные переданы не правильно',
           });
       } else {
         res.status(INTERNAL_SERVER_ERROR)
           .send({
-            message: "Ошибка сервера",
-          })
+            message: 'Ошибка сервера',
+          });
       }
-    })
+    });
 };
 
 module.exports.deleteCardById = (req, res) => {
   Card.findByIdAndDelete(req.params.cardId)
-    // Если не будет ничего найдено. Название Not Found не менять т.к коды будут не корректно работать
+    // Если не будет ничего найдено. Not Found не менять т.к коды будут не корректно работать
     .orFail(() => new Error('Not found'))
     .then((card) => res.send(card))
     .catch((err) => {
-      if (err.message === "Not found") {
+      if (err.message === 'Not found') {
         res.status(NOT_FOUND_ERROR)
           .send({
-            message: "Данные не найдены"
+            message: 'Данные не найдены',
           });
-      } else if (err.name === "CastError") {
+      } else if (err.name === 'CastError') {
         res.status(BAD_REQUEST_ERROR)
           .send({
-            message: "Объект не найден",
-          })
+            message: 'Объект не найден',
+          });
       } else {
         res.status(INTERNAL_SERVER_ERROR)
           .send({
-            message: "Ошибка сервера",
-          })
+            message: 'Ошибка сервера',
+          });
       }
-    })
-}
+    });
+};
 
 module.exports.setLikeCard = (req, res) => {
   const owner = req.user._id;
@@ -74,28 +75,28 @@ module.exports.setLikeCard = (req, res) => {
     { $addToSet: { likes: owner } }, // добавить _id в массив, если его там нет
     { new: true },
   )
-    // Если не будет ничего найдено. Название Not Found не менять т.к коды будут не корректно работать
+    // Если не будет ничего найдено. Not Found не менять т.к коды будут не корректно работать
     .orFail(() => new Error('Not found'))
     .then((card) => res.send(card))
     .catch((err) => {
-      if (err.message === "Not found") {
+      if (err.message === 'Not found') {
         res.status(NOT_FOUND_ERROR)
           .send({
-            message: "Данные не найдены"
+            message: 'Данные не найдены',
           });
-      } else if (err.name === "CastError") {
+      } else if (err.name === 'CastError') {
         res.status(BAD_REQUEST_ERROR)
           .send({
-            message: "Объект не найден",
-          })
+            message: 'Объект не найден',
+          });
       } else {
         res.status(INTERNAL_SERVER_ERROR)
           .send({
-            message: "Ошибка сервера",
-          })
+            message: 'Ошибка сервера',
+          });
       }
-    })
-}
+    });
+};
 
 module.exports.deleteLikeCard = (req, res) => {
   const owner = req.user._id;
@@ -105,25 +106,25 @@ module.exports.deleteLikeCard = (req, res) => {
     { $pull: { likes: owner } }, // убрать _id из массива
     { new: true },
   )
-    // Если не будет ничего найдено. Название Not Found не менять т.к коды будут не корректно работать
+    // Если не будет ничего найдено. Not Found не менять т.к коды будут не корректно работать
     .orFail(() => new Error('Not found'))
     .then((card) => res.send(card))
     .catch((err) => {
-      if (err.message === "Not found") {
+      if (err.message === 'Not found') {
         res.status(NOT_FOUND_ERROR)
           .send({
-            message: "Данные не найдены"
+            message: 'Данные не найдены',
           });
-      } else if (err.name === "CastError") {
+      } else if (err.name === 'CastError') {
         res.status(BAD_REQUEST_ERROR)
           .send({
-            message: "Объект не найден",
-          })
+            message: 'Объект не найден',
+          });
       } else {
         res.status(INTERNAL_SERVER_ERROR)
           .send({
-            message: "Ошибка сервера",
-          })
+            message: 'Ошибка сервера',
+          });
       }
-    })
-}
+    });
+};
