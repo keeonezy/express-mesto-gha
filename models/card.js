@@ -1,10 +1,16 @@
 const mongoose = require("mongoose");
 
+// Название создаем
 const cardSchema = new mongoose.Schema({
+  // Имя в схеме
   name: {
+    // Тип
     type: String,
+    // Обязательное требование
     required: true,
+    // Минимальная длина символов
     minlength: 2,
+    // Максимальная длина символов
     maxlength: 30,
   },
   link: {

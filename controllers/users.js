@@ -1,6 +1,3 @@
-// Для теста в postman - http://localhost:3000/users.then((user) => res.status(STATUS_CREATED).sen
-// http://localhost:3000/users?name=Вася&about=Пися&avatar=https
-
 const User = require("../models/user");
 const {
   STATUS_OK,
