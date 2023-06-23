@@ -79,3 +79,36 @@ module.exports.deleteCardById = (req, res) => {
       }
     })
 }
+
+module.exports.setLikeCard = (req, res) => {
+  const owner = req.user._id;
+
+  Card.findByIdAndUpdate(
+    req.params.cardId,
+    { $addToSet: { likes: owner } }, // добавить _id в массив, если его там нет
+    { new: true },
+  )
+    // Если не будет ничего найдено
+    .orFail(() => new Error("Не найдено"))
+    .then((card) => res.status(STATUS_OK).send(card))
+    .catch((err) => {
+      if (err.message === "Not found") {
+        res.status(NOT_FOUND_ERROR)
+          .send({
+            message: "Данные не найдены"
+          });
+      } else if (err.name === "CastError") {
+        res.status(BAD_REQUEST_ERROR)
+          .send({
+            message: "Объект не найден",
+          })
+      } else {
+        res.status(INTERNAL_SERVER_ERROR)
+          .send({
+            message: "Ошибка сервера",
+            err: err.message,
+            stack: err.stack,
+          })
+      }
+    })
+}
