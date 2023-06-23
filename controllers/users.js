@@ -48,8 +48,8 @@ const getUserById = (req, res) => {
         res.status(INTERNAL_SERVER_ERROR)
           .send({
             message: "Ошибка сервера",
-            err: err.message,
-            stack: err.stack,
+            // err: err.message,
+            // stack: err.stack,
           })
       }
     })
