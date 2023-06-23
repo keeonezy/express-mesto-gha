@@ -2,7 +2,7 @@ const router = require("express").Router();
 // Роутер пользователя
 const userRouter = require("./user");
 const cardRouter = require("./card");
-const { NOT_FOUND_ERROR } = require("../utils/responseStatus");
+const { NOT_FOUND_ERROR } = require("../utils/responseStatus").default;
 
 router.use(userRouter);
 router.use(cardRouter);

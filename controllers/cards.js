@@ -3,7 +3,7 @@ const {
   STATUS_CREATED,
   BAD_REQUEST_ERROR,
   NOT_FOUND_ERROR,
-  INTERNAL_SERVER_ERROR } = require("../utils/responseStatus");
+  INTERNAL_SERVER_ERROR } = require("../utils/responseStatus").default;
 
 module.exports.getCards = async (req, res) => {
   try {
