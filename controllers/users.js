@@ -89,6 +89,8 @@ const updateUser = (req, res) => {
           .send({
             message: "Данные не найдены"
           });
+      } else {
+        res.status(STATUS_OK).send(user);
       }
     })
     .catch((err) => {
@@ -119,6 +121,8 @@ const updateUserAvatar = (req, res) => {
           .send({
             message: "Данные не найдены"
           });
+      } else {
+        res.status(STATUS_OK).send(user);
       }
     })
     .catch((err) => {
