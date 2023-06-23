@@ -1,6 +1,5 @@
 const User = require("../models/user");
 const {
-  STATUS_OK,
   STATUS_CREATED,
   BAD_REQUEST_ERROR,
   NOT_FOUND_ERROR,
@@ -10,19 +9,12 @@ module.exports.getUsers = async (req, res) => {
   try {
     // Ожидание ответа
     const users = await User.find({});
-    res.status(STATUS_OK).send(users);
+    res.send(users);
   } catch (err) {
-    if (err.name === "ValidationError") {
-      res.status(BAD_REQUEST_ERROR)
-        .send({
-          message: "Данные не корректны"
-        })
-    } else {
+    if {
       res.status(INTERNAL_SERVER_ERROR)
         .send({
           message: "Ошибка сервера",
-          err: err.message,
-          stack: err.stack,
         })
     }
   }
@@ -32,7 +24,7 @@ module.exports.getUserById = (req, res) => {
   User.findById(req.params.userId)
     // Если не будет ничего найдено. Название Not Found не менять т.к коды будут не корректно работать
     .orFail(() => new Error('Not found'))
-    .then((user) => res.status(STATUS_OK).send(user))
+    .then((user) => res.send(user))
     .catch((err) => {
       if (err.message === 'Not found') {
         res.status(NOT_FOUND_ERROR)
@@ -48,8 +40,6 @@ module.exports.getUserById = (req, res) => {
         res.status(INTERNAL_SERVER_ERROR)
           .send({
             message: "Ошибка сервера",
-            err: err.message,
-            stack: err.stack,
           })
       }
     })
@@ -71,8 +61,6 @@ module.exports.createUser = (req, res) => {
         res.status(INTERNAL_SERVER_ERROR)
           .send({
             message: "Ошибка сервера",
-            err: err.message,
-            stack: err.stack,
           })
       }
     })
@@ -90,7 +78,7 @@ module.exports.updateUser = (req, res) => {
             message: "Данные не найдены"
           });
       } else {
-        res.status(STATUS_OK).send(user);
+        res.send(user);
       }
     })
     .catch((err) => {
@@ -103,8 +91,6 @@ module.exports.updateUser = (req, res) => {
         res.status(INTERNAL_SERVER_ERROR)
           .send({
             message: "Ошибка сервера",
-            err: err.message,
-            stack: err.stack,
           })
       }
     })
@@ -122,7 +108,7 @@ module.exports.updateUserAvatar = (req, res) => {
             message: "Данные не найдены"
           });
       } else {
-        res.status(STATUS_OK).send(user);
+        res.send(user);
       }
     })
     .catch((err) => {
@@ -135,8 +121,6 @@ module.exports.updateUserAvatar = (req, res) => {
         res.status(INTERNAL_SERVER_ERROR)
           .send({
             message: "Ошибка сервера",
-            err: err.message,
-            stack: err.stack,
           })
       }
     })

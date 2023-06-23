@@ -1,6 +1,5 @@
 const Card = require("../models/card");
 const {
-  STATUS_OK,
   STATUS_CREATED,
   BAD_REQUEST_ERROR,
   NOT_FOUND_ERROR,
@@ -10,19 +9,12 @@ module.exports.getCards = async (req, res) => {
   try {
     // Ожидание ответа
     const cards = await Card.find({});
-    res.status(STATUS_OK).send(cards);
+    res.send(cards);
   } catch (err) {
-    if (err.name === "ValidationError") {
-      res.status(BAD_REQUEST_ERROR)
-        .send({
-          message: "Данные не корректны"
-        })
-    } else {
+    if {
       res.status(INTERNAL_SERVER_ERROR)
         .send({
           message: "Ошибка сервера",
-          err: err.message,
-          stack: err.stack,
         })
     }
   }
@@ -46,8 +38,6 @@ module.exports.createCard = (req, res) => {
         res.status(INTERNAL_SERVER_ERROR)
           .send({
             message: "Ошибка сервера",
-            err: err.message,
-            stack: err.stack,
           })
       }
     })
@@ -57,7 +47,7 @@ module.exports.deleteCardById = (req, res) => {
   Card.findByIdAndDelete(req.params.cardId)
     // Если не будет ничего найдено. Название Not Found не менять т.к коды будут не корректно работать
     .orFail(() => new Error('Not found'))
-    .then((card) => res.status(STATUS_OK).send(card))
+    .then((card) => res.send(card))
     .catch((err) => {
       if (err.message === "Not found") {
         res.status(NOT_FOUND_ERROR)
@@ -73,8 +63,6 @@ module.exports.deleteCardById = (req, res) => {
         res.status(INTERNAL_SERVER_ERROR)
           .send({
             message: "Ошибка сервера",
-            err: err.message,
-            stack: err.stack,
           })
       }
     })
@@ -90,7 +78,7 @@ module.exports.setLikeCard = (req, res) => {
   )
     // Если не будет ничего найдено. Название Not Found не менять т.к коды будут не корректно работать
     .orFail(() => new Error('Not found'))
-    .then((card) => res.status(STATUS_OK).send(card))
+    .then((card) => res.send(card))
     .catch((err) => {
       if (err.message === "Not found") {
         res.status(NOT_FOUND_ERROR)
@@ -106,8 +94,6 @@ module.exports.setLikeCard = (req, res) => {
         res.status(INTERNAL_SERVER_ERROR)
           .send({
             message: "Ошибка сервера",
-            err: err.message,
-            stack: err.stack,
           })
       }
     })
@@ -123,7 +109,7 @@ module.exports.deleteLikeCard = (req, res) => {
   )
     // Если не будет ничего найдено. Название Not Found не менять т.к коды будут не корректно работать
     .orFail(() => new Error('Not found'))
-    .then((card) => res.status(STATUS_OK).send(card))
+    .then((card) => res.send(card))
     .catch((err) => {
       if (err.message === "Not found") {
         res.status(NOT_FOUND_ERROR)
@@ -139,8 +125,6 @@ module.exports.deleteLikeCard = (req, res) => {
         res.status(INTERNAL_SERVER_ERROR)
           .send({
             message: "Ошибка сервера",
-            err: err.message,
-            stack: err.stack,
           })
       }
     })
