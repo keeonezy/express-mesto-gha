@@ -13,6 +13,7 @@ const { PORT = 3000 } = process.env;
 // localhost не работает с POST. Устанавливаем 127.0.0.1
 mongoose.connect('mongodb://127.0.0.1:27017/mestodb');
 mongoose.connection.on('connected', () => console.log('Связь с БД установлена'));
+mongoose.connection.on('error', () => console.log('Бд сломалась - '));
 
 app.use(express.json());
 
