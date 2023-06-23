@@ -11,12 +11,10 @@ module.exports.getUsers = async (req, res) => {
     const users = await User.find({});
     res.send(users);
   } catch (err) {
-    if {
-      res.status(INTERNAL_SERVER_ERROR)
-        .send({
-          message: "Ошибка сервера",
-        })
-    }
+    res.status(INTERNAL_SERVER_ERROR)
+      .send({
+        message: "Ошибка сервера",
+      })
   }
 }
 

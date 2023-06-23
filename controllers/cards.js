@@ -11,12 +11,10 @@ module.exports.getCards = async (req, res) => {
     const cards = await Card.find({});
     res.send(cards);
   } catch (err) {
-    if {
-      res.status(INTERNAL_SERVER_ERROR)
-        .send({
-          message: "Ошибка сервера",
-        })
-    }
+    res.status(INTERNAL_SERVER_ERROR)
+      .send({
+        message: "Ошибка сервера",
+      })
   }
 }
 
