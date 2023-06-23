@@ -30,26 +30,26 @@ const getUsers = async (req, res) => {
 
 const getUserById = (req, res) => {
   User.findById(req.params.userId)
-    // Если не будет ничего найдено
-    .orFail(() => new Error("Не найдено"))
+    // Если не будет ничего найдено. Название Not Found не менять
+    .orFail(() => new Error('Not found'))
     .then((user) => res.status(STATUS_OK).send(user))
     .catch((err) => {
-      if (err.message === "Not found") {
+      if (err.message === 'Not found') {
         res.status(NOT_FOUND_ERROR)
           .send({
-            message: "Данные не найдены"
+            message: "Данные не найдены 404"
           });
-      } else if (err.name === "CastError") {
+      } else if (err.name === 'CastError') {
         res.status(BAD_REQUEST_ERROR)
           .send({
-            message: "Объект не найден",
+            message: "Объект не найден 400",
           })
       } else {
         res.status(INTERNAL_SERVER_ERROR)
           .send({
             message: "Ошибка сервера",
-            // err: err.message,
-            // stack: err.stack,
+            err: err.message,
+            stack: err.stack,
           })
       }
     })

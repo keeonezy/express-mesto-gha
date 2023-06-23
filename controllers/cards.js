@@ -56,7 +56,7 @@ module.exports.createCard = (req, res) => {
 module.exports.deleteCardById = (req, res) => {
   Card.findByIdAndDelete(req.params.cardId)
     // Если не будет ничего найдено
-    .orFail(() => new Error("Не найдено"))
+    .orFail(() => new Error('Not found'))
     .then((card) => res.status(STATUS_OK).send(card))
     .catch((err) => {
       if (err.message === "Not found") {
@@ -89,7 +89,7 @@ module.exports.setLikeCard = (req, res) => {
     { new: true },
   )
     // Если не будет ничего найдено
-    .orFail(() => new Error("Не найдено"))
+    .orFail(() => new Error('Not found'))
     .then((card) => res.status(STATUS_OK).send(card))
     .catch((err) => {
       if (err.message === "Not found") {
@@ -122,7 +122,7 @@ module.exports.deleteLikeCard = (req, res) => {
     { new: true },
   )
     // Если не будет ничего найдено
-    .orFail(() => new Error("Не найдено"))
+    .orFail(() => new Error('Not found'))
     .then((card) => res.status(STATUS_OK).send(card))
     .catch((err) => {
       if (err.message === "Not found") {
