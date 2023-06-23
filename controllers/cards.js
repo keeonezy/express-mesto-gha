@@ -30,10 +30,10 @@ module.exports.getCards = async (req, res) => {
 
 module.exports.createCard = (req, res) => {
   const { name, link } = req.body;
-  // const owner = req.user._id;
+  const owner = req.user._id;
   console.log(req.user._id); // _id станет доступен
 
-  Card.create({ name, link, owner: req.user._id })
+  Card.create({ name, link, owner })
     // 201 статус должен быть успешным
     .then((card) => res.status(STATUS_CREATED).send(card))
     .catch((err) => {
