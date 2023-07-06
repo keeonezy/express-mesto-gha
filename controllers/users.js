@@ -45,28 +45,53 @@ module.exports.getUserById = (req, res) => {
     });
 };
 
-module.exports.createUser = (req, res) => {
-  const { name, about, avatar } = req.body;
-  const hashedPassword = bcrypt.hash(String(password), 10);
+// module.exports.createUser = (req, res) => {
+//   const { name, about, avatar, email, password } = req.body;
+//   const hashedPassword = bcrypt.hash(String(password), 10);
 
-  User.create({
-    name, about, avatar
-  })
-    // 201 статус должен быть успешным
-    .then((user) => res.status(STATUS_CREATED).send(user))
-    .catch((err) => {
-      if (err.name === 'ValidationError') {
-        res.status(BAD_REQUEST_ERROR)
-          .send({
-            message: 'Данные переданы не правильно',
-          });
-      } else {
-        res.status(INTERNAL_SERVER_ERROR)
-          .send({
-            message: 'Ошибка сервера',
-          });
-      }
+//   User.create({
+//     name, about, avatar, email, password,
+//   })
+//     // 201 статус должен быть успешным
+//     .then((user) => res.status(STATUS_CREATED).send(user))
+//     .catch((err) => {
+//       if (err.name === 'ValidationError') {
+//         res.status(BAD_REQUEST_ERROR)
+//           .send({
+//             message: 'Данные переданы не правильно',
+//           });
+//       } else {
+//         res.status(INTERNAL_SERVER_ERROR)
+//           .send({
+//             message: 'Ошибка сервера',
+//           });
+//       }
+//     });
+// };
+
+module.exports.createUser = async (req, res) => {
+  const { name, about, avatar, email, password } = req.body;
+
+  try {
+    // Соль для пароля. Создает уникальное значение хэша
+    const hashedPassword = await bcrypt.hash(String(password), 10);
+    const user = await User.create({
+      name, about, avatar, email, password: hashedPassword,
     });
+    res.status(STATUS_CREATED).send(user);
+  } catch (err) {
+    if (err.name === 'ValidationError') {
+      res.status(BAD_REQUEST_ERROR)
+        .send({
+          message: 'Данные переданы не правильно',
+        });
+    } else {
+      res.status(INTERNAL_SERVER_ERROR)
+        .send({
+          message: 'Ошибка сервера',
+        });
+    }
+  };
 };
 
 module.exports.updateUser = (req, res) => {
