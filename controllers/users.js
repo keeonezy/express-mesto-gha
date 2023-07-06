@@ -1,3 +1,4 @@
+const bcrypt = require("bcryptjs");
 const User = require('../models/user');
 const {
   STATUS_CREATED,
@@ -46,8 +47,11 @@ module.exports.getUserById = (req, res) => {
 
 module.exports.createUser = (req, res) => {
   const { name, about, avatar } = req.body;
+  const hashedPassword = bcrypt.hash(String(password), 10);
 
-  User.create({ name, about, avatar })
+  User.create({
+    name, about, avatar
+  })
     // 201 статус должен быть успешным
     .then((user) => res.status(STATUS_CREATED).send(user))
     .catch((err) => {
