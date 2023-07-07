@@ -22,6 +22,32 @@ module.exports.getUsers = async (req, res) => {
   }
 };
 
+module.exports.getUserInfo = (req, res) => {
+  try {
+    const user = User.findById(req.user._id)
+      // Если не будет ничего найдено. Not Found не менять т.к коды будут не корректно работать
+      .orFail(() => new Error('Not found'));
+    res.send(user);
+  } catch (err) {
+    if (err.message === 'Not found') {
+      res.status(NOT_FOUND_ERROR)
+        .send({
+          message: 'Данные не найдены',
+        });
+    } else if (err.name === 'CastError') {
+      res.status(BAD_REQUEST_ERROR)
+        .send({
+          message: 'Объект не найден',
+        });
+    } else {
+      res.status(INTERNAL_SERVER_ERROR)
+        .send({
+          message: 'Ошибка сервера',
+        });
+    }
+  }
+};
+
 module.exports.getUserById = (req, res) => {
   User.findById(req.params.userId)
     // Если не будет ничего найдено. Not Found не менять т.к коды будут не корректно работать
