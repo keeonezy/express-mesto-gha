@@ -3,6 +3,7 @@ const User = require('../models/user');
 const {
   STATUS_CREATED,
   BAD_REQUEST_ERROR,
+  UNAUTH_ERROR,
   NOT_FOUND_ERROR,
   INTERNAL_SERVER_ERROR,
 } = require('../utils/responseStatus');
@@ -153,3 +154,43 @@ module.exports.updateUserAvatar = (req, res) => {
       }
     });
 };
+
+module.exports.login = async (req, res) => {
+  const { email, password } = req.body;
+
+  try {
+    // Существует ли email
+    const user = await User.findOne({ email })
+      .select('+password');
+    if (user) {
+      const isValidUser = await bcrypt.compare(String(password), user.password);
+      if (isValidUser) {
+        // Создаем JWT токен
+        const jwt = jsonWebToken.sign({
+          _id: user._id,
+        }, process.env['SECRET__HEHE']); // Наш секретный код для пароля
+        // закреляем JWT к cookie
+        res.cookie('jwt', jwt, {
+          maxAge: 7 * 24 * 60 * 60 * 1000, // 7 дней(дни, часы, минуты, секунды, милисекунды)
+          httpOnly: true, // Cookie только для http запроса, а не js
+          sameSite: true, // Cookie отправляется только в рамках 1 домена
+          secure: true, // Cookie только для https соединения
+        });
+        res.send({ data: user.toJSON() });
+      }
+    }
+  } catch (err) {
+    if (err.name === 'ValidationError') {
+      res.status(BAD_REQUEST_ERROR)
+        .send({
+          message: 'Данные переданы не правильно',
+        });
+    } else {
+      res.status(INTERNAL_SERVER_ERROR)
+        .send({
+          message: 'Ошибка сервера',
+        });
+    }
+  };
+
+}
