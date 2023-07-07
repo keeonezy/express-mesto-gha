@@ -7,6 +7,7 @@ const {
   NOT_FOUND_ERROR,
   INTERNAL_SERVER_ERROR,
 } = require('../utils/responseStatus');
+const jsonWebToken = require('jsonwebtoken');
 
 module.exports.getUsers = async (req, res) => {
   try {

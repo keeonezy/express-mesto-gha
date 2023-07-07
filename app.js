@@ -31,3 +31,5 @@ app.use(router);
 app.listen(PORT, () => {
   console.log(`Сервер запущен на порте: ${PORT}`);
 });
+
+module.exports = app;
