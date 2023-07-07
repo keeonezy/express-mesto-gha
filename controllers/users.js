@@ -1,4 +1,5 @@
-const bcrypt = require("bcryptjs");
+const bcrypt = require('bcryptjs');
+const jsonWebToken = require('jsonwebtoken');
 const User = require('../models/user');
 const {
   STATUS_CREATED,
@@ -7,7 +8,6 @@ const {
   NOT_FOUND_ERROR,
   INTERNAL_SERVER_ERROR,
 } = require('../utils/responseStatus');
-const jsonWebToken = require('jsonwebtoken');
 
 module.exports.getUsers = async (req, res) => {
   try {
@@ -72,7 +72,9 @@ module.exports.getUserById = (req, res) => {
 // };
 
 module.exports.createUser = async (req, res) => {
-  const { name, about, avatar, email, password } = req.body;
+  const {
+    name, about, avatar, email, password,
+  } = req.body;
 
   try {
     // Соль для пароля. Создает уникальное значение хэша
@@ -93,7 +95,7 @@ module.exports.createUser = async (req, res) => {
           message: 'Ошибка сервера',
         });
     }
-  };
+  }
 };
 
 module.exports.updateUser = (req, res) => {
@@ -169,7 +171,7 @@ module.exports.login = async (req, res) => {
         // Создаем JWT токен
         const jwt = jsonWebToken.sign({
           _id: user._id,
-        }, process.env['SECRET__HEHE']); // Наш секретный код для пароля
+        }, process.env.SECRET__HEHE); // Наш секретный код для пароля
         // закреляем JWT к cookie
         res.cookie('jwt', jwt, {
           maxAge: 7 * 24 * 60 * 60 * 1000, // 7 дней(дни, часы, минуты, секунды, милисекунды)
@@ -192,6 +194,5 @@ module.exports.login = async (req, res) => {
           message: 'Ошибка сервера',
         });
     }
-  };
-
-}
+  }
+};

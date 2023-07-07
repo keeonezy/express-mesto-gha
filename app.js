@@ -2,6 +2,7 @@
 const express = require('express');
 // Для работы с БД
 const mongoose = require('mongoose');
+const cookieParser = require('cookie-parser');
 const router = require('./routes');
 
 // Создаем сервер
@@ -16,6 +17,7 @@ mongoose.connection.on('connected', () => console.log('Связь с БД уст
 mongoose.connection.on('error', () => console.log('Бд сломалась - '));
 
 app.use(express.json());
+app.use(cookieParser());
 
 app.use((req, res, next) => {
   req.user = {
@@ -31,5 +33,3 @@ app.use(router);
 app.listen(PORT, () => {
   console.log(`Сервер запущен на порте: ${PORT}`);
 });
-
-module.exports = app;
