@@ -29,6 +29,16 @@ app.use((req, res, next) => {
 
 app.use(router);
 
+app.use((err, req, res, next) => {
+  const { statusCode = 500, message } = err;
+  res.status(statusCode)
+    .send({
+      message: statusCode === 500 ? 'На сервере произошла ошибка' : message,
+    });
+
+  next();
+});
+
 // Беру порт и передаю колбэк, он вызовется в момент его старта
 app.listen(PORT, () => {
   console.log(`Сервер запущен на порте: ${PORT}`);
