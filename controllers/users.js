@@ -4,7 +4,7 @@ const User = require('../models/user');
 const { STATUS_CREATED } = require('../utils/responseStatus');
 const BadRequestError = require('../utils/status-400');
 const NotFoundError = require('../utils/status-404');
-const ConflictError = require("../utils/status-409")
+const ConflictError = require('../utils/status-409');
 
 module.exports.getUsers = async (req, res, next) => {
   try {
