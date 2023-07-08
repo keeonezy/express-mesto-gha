@@ -115,8 +115,8 @@ module.exports.login = async (req, res, next) => {
     if (user) {
       const isValidUser = await bcrypt.compare(String(password), user.password);
       if (isValidUser) {
-        // Создаем JWT токен
-        const token = jwt.sign({ _id: user._id, }, process.env.SECRET__HEHE); // Наш секретный код для пароля
+        // Создаем JWT токен. В process.env передаем наш код секретный
+        const token = jwt.sign({ _id: user._id }, process.env.SECRET__HEHE);
         // закреляем JWT к cookie
         res.cookie('jwt', token, {
           maxAge: 7 * 24 * 60 * 60 * 1000, // 7 дней(дни, часы, минуты, секунды, милисекунды)
