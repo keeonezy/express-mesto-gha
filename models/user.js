@@ -44,7 +44,7 @@ const userSchema = new mongoose.Schema({
   password: {
     type: String,
     required: true,
-    // select: false, // Скрывает пароль от вывода
+    select: false, // Скрывает пароль от вывода
   },
 });
 
@@ -66,7 +66,6 @@ userSchema.statics.findUserByCredentials = function (email, password) {
         }
         return user;
       });
-
     });
 };
 
