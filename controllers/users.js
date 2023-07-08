@@ -1,103 +1,49 @@
 const bcrypt = require('bcryptjs');
 const jsonWebToken = require('jsonwebtoken');
 const User = require('../models/user');
-const {
-  STATUS_CREATED,
-  BAD_REQUEST_ERROR,
-  UNAUTH_ERROR,
-  NOT_FOUND_ERROR,
-  INTERNAL_SERVER_ERROR,
-} = require('../utils/responseStatus');
+const { STATUS_CREATED } = require('../utils/responseStatus');
+const BadRequestError = require('../utils/status-400');
+const NotFoundError = require('../utils/status-404');
 
-module.exports.getUsers = async (req, res) => {
+module.exports.getUsers = async (req, res, next) => {
   try {
     // Ожидание ответа
     const users = await User.find({});
     res.send(users);
   } catch (err) {
-    res.status(INTERNAL_SERVER_ERROR)
-      .send({
-        message: 'Ошибка сервера',
-      });
+    next(err);
   }
 };
 
-module.exports.getUserInfo = (req, res) => {
+module.exports.getUserInfo = (req, res, next) => {
   try {
     const user = User.findById(req.user._id)
       // Если не будет ничего найдено. Not Found не менять т.к коды будут не корректно работать
-      .orFail(() => new Error('Not found'));
+      .orFail(() => { throw new NotFoundError('Карточка для удаления не найдена'); });
     res.send(user);
   } catch (err) {
-    if (err.message === 'Not found') {
-      res.status(NOT_FOUND_ERROR)
-        .send({
-          message: 'Данные не найдены',
-        });
-    } else if (err.name === 'CastError') {
-      res.status(BAD_REQUEST_ERROR)
-        .send({
-          message: 'Объект не найден',
-        });
+    if (err.name === 'CastError') {
+      next(new BadRequestError('Не правильно переданы данные'));
     } else {
-      res.status(INTERNAL_SERVER_ERROR)
-        .send({
-          message: 'Ошибка сервера',
-        });
+      next(err);
     }
   }
 };
 
-module.exports.getUserById = (req, res) => {
+module.exports.getUserById = (req, res, next) => {
   User.findById(req.params.userId)
-    // Если не будет ничего найдено. Not Found не менять т.к коды будут не корректно работать
-    .orFail(() => new Error('Not found'))
+    .orFail(() => { throw new NotFoundError('Карточка для удаления не найдена'); })
     .then((user) => res.send(user))
     .catch((err) => {
-      if (err.message === 'Not found') {
-        res.status(NOT_FOUND_ERROR)
-          .send({
-            message: 'Данные не найдены',
-          });
-      } else if (err.name === 'CastError') {
-        res.status(BAD_REQUEST_ERROR)
-          .send({
-            message: 'Объект не найден',
-          });
+      if (err.name === 'ValidationError') {
+        next(new BadRequestError('Не правильно переданы данные'));
       } else {
-        res.status(INTERNAL_SERVER_ERROR)
-          .send({
-            message: 'Ошибка сервера',
-          });
+        next(err);
       }
     });
 };
 
-// module.exports.createUser = (req, res) => {
-//   const { name, about, avatar, email, password } = req.body;
-//   const hashedPassword = bcrypt.hash(String(password), 10);
-
-//   User.create({
-//     name, about, avatar, email, password,
-//   })
-//     // 201 статус должен быть успешным
-//     .then((user) => res.status(STATUS_CREATED).send(user))
-//     .catch((err) => {
-//       if (err.name === 'ValidationError') {
-//         res.status(BAD_REQUEST_ERROR)
-//           .send({
-//             message: 'Данные переданы не правильно',
-//           });
-//       } else {
-//         res.status(INTERNAL_SERVER_ERROR)
-//           .send({
-//             message: 'Ошибка сервера',
-//           });
-//       }
-//     });
-// };
-
-module.exports.createUser = async (req, res) => {
+module.exports.createUser = async (req, res, next) => {
   const {
     name, about, avatar, email, password,
   } = req.body;
@@ -111,80 +57,56 @@ module.exports.createUser = async (req, res) => {
     res.status(STATUS_CREATED).send(user);
   } catch (err) {
     if (err.name === 'ValidationError') {
-      res.status(BAD_REQUEST_ERROR)
-        .send({
-          message: 'Данные переданы не правильно',
-        });
+      next(new BadRequestError('Не правильно переданы данные'));
     } else {
-      res.status(INTERNAL_SERVER_ERROR)
-        .send({
-          message: 'Ошибка сервера',
-        });
+      next(err);
     }
   }
 };
 
-module.exports.updateUser = (req, res) => {
+module.exports.updateUser = (req, res, next) => {
   const { name, about } = req.body;
   const owner = req.user._id;
 
   User.findByIdAndUpdate(owner, { name, about }, { new: true, runValidators: true })
     .then((user) => {
-      if (!user) {
-        res.status(NOT_FOUND_ERROR)
-          .send({
-            message: 'Данные не найдены',
-          });
-      } else {
+      if (user) {
         res.send(user);
+      } else {
+        throw new NotFoundError('Пользователь не найден');
       }
     })
     .catch((err) => {
       if (err.name === 'ValidationError') {
-        res.status(BAD_REQUEST_ERROR)
-          .send({
-            message: 'Данные переданы не правильно',
-          });
+        next(new BadRequestError('Не правильно переданы данные'));
       } else {
-        res.status(INTERNAL_SERVER_ERROR)
-          .send({
-            message: 'Ошибка сервера',
-          });
+        next(err);
       }
     });
 };
 
-module.exports.updateUserAvatar = (req, res) => {
+module.exports.updateUserAvatar = (req, res, next) => {
   const { avatar } = req.body;
   const owner = req.user._id;
 
   User.findByIdAndUpdate(owner, { avatar }, { new: true, runValidators: true })
     .then((user) => {
-      if (!user) {
-        res.status(NOT_FOUND_ERROR)
-          .send({
-            message: 'Данные не найдены',
-          });
-      } else {
+      if (user) {
         res.send(user);
+      } else {
+        throw new NotFoundError('Пользователь не найден');
       }
     })
     .catch((err) => {
       if (err.name === 'ValidationError') {
-        res.status(BAD_REQUEST_ERROR)
-          .send({
-            message: 'Данные переданы не правильно',
-          });
+        next(new BadRequestError('Не правильно переданы данные'));
       } else {
-        res.status(INTERNAL_SERVER_ERROR)
-          .send({
-            message: 'Ошибка сервера',
-          });
+        next(err);
       }
     });
 };
 
-module.exports.login = async (req, res) => {
+module.exports.login = async (req, res, next) => {
   const { email, password } = req.body;
 
   try {
@@ -210,15 +132,9 @@ module.exports.login = async (req, res) => {
     }
   } catch (err) {
     if (err.name === 'ValidationError') {
-      res.status(BAD_REQUEST_ERROR)
-        .send({
-          message: 'Данные переданы не правильно',
-        });
+      next(new BadRequestError('Не правильно переданы данные'));
     } else {
-      res.status(INTERNAL_SERVER_ERROR)
-        .send({
-          message: 'Ошибка сервера',
-        });
+      next(err);
     }
   }
 };
