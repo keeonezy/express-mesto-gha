@@ -11,13 +11,13 @@ const app = express();
 // Устанавливаем порт
 const { PORT = 3000 } = process.env;
 
-// localhost не работает с POST. Устанавливаем 127.0.0.1
+// Подключаемся к БД. localhost не работает с POST. Устанавливаем 127.0.0.1
 mongoose.connect('mongodb://127.0.0.1:27017/mestodb');
 mongoose.connection.on('connected', () => console.log('Связь с БД установлена'));
 mongoose.connection.on('error', () => console.log('Бд сломалась - '));
 
-app.use(express.json());
 app.use(cookieParser());
+app.use(express.json());
 
 app.use((req, res, next) => {
   req.user = {

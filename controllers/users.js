@@ -1,5 +1,5 @@
 const bcrypt = require('bcryptjs');
-const jsonWebToken = require('jsonwebtoken');
+const jwt = require('jsonwebtoken');
 const User = require('../models/user');
 const { STATUS_CREATED } = require('../utils/responseStatus');
 const BadRequestError = require('../utils/status-400');
@@ -111,23 +111,20 @@ module.exports.login = async (req, res, next) => {
 
   try {
     // Существует ли email
-    const user = await User.findOne({ email })
-      .select('+password');
+    const user = await User.findUserByCredentials(email, password);
     if (user) {
       const isValidUser = await bcrypt.compare(String(password), user.password);
       if (isValidUser) {
         // Создаем JWT токен
-        const jwt = jsonWebToken.sign({
-          _id: user._id,
-        }, process.env.SECRET__HEHE); // Наш секретный код для пароля
+        const token = jwt.sign({ _id: user._id, }, process.env.SECRET__HEHE); // Наш секретный код для пароля
         // закреляем JWT к cookie
-        res.cookie('jwt', jwt, {
+        res.cookie('jwt', token, {
           maxAge: 7 * 24 * 60 * 60 * 1000, // 7 дней(дни, часы, минуты, секунды, милисекунды)
           httpOnly: true, // Cookie только для http запроса, а не js
           sameSite: true, // Cookie отправляется только в рамках 1 домена
           secure: true, // Cookie только для https соединения
         });
-        res.send({ data: user.toJSON() });
+        res.send({ token });
       }
     }
   } catch (err) {
