@@ -3,6 +3,7 @@ const express = require('express');
 // Для работы с БД
 const mongoose = require('mongoose');
 const cookieParser = require('cookie-parser');
+const { errors } = require('celebrate');
 const router = require('./routes');
 
 // Создаем сервер
@@ -21,6 +22,7 @@ app.use(express.json());
 
 app.use(router);
 
+app.use(errors());
 app.use((err, req, res, next) => {
   const { statusCode = 500, message } = err;
   res.status(statusCode)
