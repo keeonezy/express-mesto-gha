@@ -3,20 +3,22 @@ const UnauthorizedError = require('../utils/status-401');
 
 module.exports = (req, res, next) => {
   const { authorization } = req.headers;
-  const token = authorization.replace('Bearer ', '');
 
-  if (!token) {
-    return next(new UnauthorizedError('Нужна авторизация'));
+  if (!authorization || !authorization.startsWith('Bearer ')) {
+    next(new UnauthorizedError('Нужна авторизация'));
+    return;
   }
 
+  const token = authorization.replace('Bearer ', '');
   let payload;
 
   try {
     payload = jwt.verify(token, 'secret-key');
   } catch (err) {
-    return next(new UnauthorizedError('Нужна авторизация'));
+    next(new UnauthorizedError('Нужна авторизация'));
+    return;
   }
 
   req.user = payload;
-  return next();
+  next();
 };
