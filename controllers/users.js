@@ -13,23 +13,23 @@ module.exports.getUsers = (req, res, next) => {
 };
 
 module.exports.getUserInfo = (req, res, next) => {
-  try {
-    const user = User.findById(req.user._id)
-      // Если не будет ничего найдено. Not Found не менять т.к коды будут не корректно работать
-      .orFail(() => { throw new NotFoundError('Карточка для удаления не найдена'); });
-    res.send({ user });
-  } catch (err) {
-    if (err.name === 'CastError') {
-      next(new BadRequestError('Не правильно переданы данные'));
-    } else {
-      next(err);
-    }
-  }
+  User.findById(req.user._id)
+    .orFail(() => {
+      throw new NotFoundError('Пользователь не найден');
+    })
+    .then((data) => res.send({ data }))
+    .catch((err) => {
+      if (err.name === 'CastError') {
+        next(new BadRequestError('Не правильно переданы данные'));
+      } else {
+        next(err);
+      }
+    });
 };
 
 module.exports.getUserById = (req, res, next) => {
   User.findById(req.params.id)
-    .orFail(() => { throw new NotFoundError('Карточка для удаления не найдена'); })
+    .orFail(() => { throw new NotFoundError('Пользователь не найден по id'); })
     .then((user) => res.send(user))
     .catch((err) => {
       if (err.name === 'ValidationError') {
