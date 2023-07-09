@@ -68,34 +68,42 @@ module.exports.createUser = async (req, res, next) => {
   }
 };
 
-module.exports.login = async (req, res, next) => {
-  const { email, password } = req.body;
+// module.exports.createUser = (req, res, next) => {
+//   bcrypt.hash(String(req.body.password), 10)
+//     .then((hash) => {
+//       const userData = {
+//         name: req.body.name,
+//         about: req.body.about,
+//         avatar: req.body.avatar,
+//         email: req.body.email,
+//         password: hash,
+//       };
+//       return User.create(userData);
+//     })
+//     .then(({
+//       name, about, avatar, email, _id,
+//     }) => res.status(STATUS_CREATED).send({
+//       name, about, avatar, email, _id,
+//     }))
+//     .catch((err) => {
+//       if (err.name === 'ValidationError') {
+//         next(new BadRequestError('Не правильно переданы данные'));
+//       } else if (err.code === 11000) {
+//         next(new ConflictError('Пользователь с такой почтой уже зарегистрирован'));
+//       } else {
+//         next(err);
+//       }
+//     });
+// };
 
-  try {
-    // Существует ли email
-    const user = await User.findUserByCredentials(email, password);
-    if (user) {
-      const isValidUser = await bcrypt.compare(String(password), user.password);
-      if (isValidUser) {
-        // Создаем JWT токен. В process.env передаем наш код секретный
-        const token = jwt.sign({ _id: user._id }, process.env.SECRET__HEHE);
-        // закреляем JWT к cookie
-        res.cookie('jwt', token, {
-          maxAge: 7 * 24 * 60 * 60 * 1000, // 7 дней(дни, часы, минуты, секунды, милисекунды)
-          httpOnly: true, // Cookie только для http запроса, а не js
-          sameSite: true, // Cookie отправляется только в рамках 1 домена
-          secure: true, // Cookie только для https соединения
-        });
-        res.send({ token });
-      }
-    }
-  } catch (err) {
-    if (err.name === 'ValidationError') {
-      next(new BadRequestError('Не правильно переданы данные'));
-    } else {
-      next(err);
-    }
-  }
+module.exports.login = (req, res, next) => {
+  const { email, password } = req.body;
+  User.findUserByCredentials(email, password)
+    .then((user) => {
+      const token = jwt.sign({ _id: user._id }, 'SECRET__HEHE', { expiresIn: '7d' });
+      res.send({ token });
+    })
+    .catch(next);
 };
 
 module.exports.updateUser = (req, res, next) => {
