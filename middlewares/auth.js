@@ -1,23 +1,22 @@
 const jwt = require('jsonwebtoken');
 const UnauthorizedError = require('../utils/status-401');
 
-const auth = (req, res, next) => {
-  const token = req.cookies.jwt;
+module.exports = (req, res, next) => {
+  const { authorization } = req.headers;
+  const token = authorization.replace('Bearer ', '');
 
   if (!token) {
-    next(new UnauthorizedError('Нужна авторизация'));
+    return next(new UnauthorizedError('Need authentication'));
   }
 
-  let payload;
+  let payload; // Полезная нагрузка (чем мы нагрузили наш запрос)
 
   try {
-    payload = jwt.verify(token, process.env.SECRET__HEHE);
+    payload = jwt.verify(token, 'secret-key');
   } catch (err) {
-    next(new UnauthorizedError('Нужна авторизация'));
+    return next(new UnauthorizedError('Need authentication'));
   }
 
   req.user = payload;
   return next();
 };
-
-module.exports = auth;
