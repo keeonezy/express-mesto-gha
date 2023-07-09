@@ -6,40 +6,6 @@ const BadRequestError = require('../utils/status-400');
 const NotFoundError = require('../utils/status-404');
 const ConflictError = require('../utils/status-409');
 
-module.exports.getUsers = (req, res, next) => {
-  User.find({})
-    .then((data) => res.send({ data }))
-    .catch(next);
-};
-
-module.exports.getUserInfo = (req, res, next) => {
-  User.findById(req.user._id)
-    .orFail(() => {
-      throw new NotFoundError('Пользователь не найден');
-    })
-    .then((data) => res.send({ data }))
-    .catch((err) => {
-      if (err.name === 'CastError') {
-        next(new BadRequestError('Не правильно переданы данные'));
-      } else {
-        next(err);
-      }
-    });
-};
-
-module.exports.getUserById = (req, res, next) => {
-  User.findById(req.params.id)
-    .orFail(() => { throw new NotFoundError('Пользователь не найден по id'); })
-    .then((user) => res.send(user))
-    .catch((err) => {
-      if (err.name === 'ValidationError') {
-        next(new BadRequestError('Не правильно переданы данные'));
-      } else {
-        next(err);
-      }
-    });
-};
-
 module.exports.createUser = (req, res, next) => {
   bcrypt.hash(String(req.body.password), 10)
     .then((hash) => {
@@ -70,12 +36,45 @@ module.exports.createUser = (req, res, next) => {
 
 module.exports.login = (req, res, next) => {
   const { email, password } = req.body;
+
   User.findUserByCredentials(email, password)
     .then((user) => {
       const token = jwt.sign({ _id: user._id }, 'SECRET__HEHE', { expiresIn: '7d' });
       res.send({ token });
     })
     .catch(next);
+};
+
+module.exports.getUsers = (req, res, next) => {
+  User.find({})
+    .then((data) => res.send({ data }))
+    .catch(next);
+};
+
+module.exports.getUserInfo = (req, res, next) => {
+  User.findById(req.user._id)
+    .orFail(() => { throw new NotFoundError('Пользователь не найден'); })
+    .then((data) => res.send({ data }))
+    .catch((err) => {
+      if (err.name === 'CastError') {
+        next(new BadRequestError('Не правильно переданы данные'));
+      } else {
+        next(err);
+      }
+    });
+};
+
+module.exports.getUserById = (req, res, next) => {
+  User.findById(req.params.id)
+    .orFail(() => { throw new NotFoundError('Пользователь не найден по id'); })
+    .then((user) => res.send(user))
+    .catch((err) => {
+      if (err.name === 'ValidationError') {
+        next(new BadRequestError('Не правильно переданы данные'));
+      } else {
+        next(err);
+      }
+    });
 };
 
 module.exports.updateUser = (req, res, next) => {
