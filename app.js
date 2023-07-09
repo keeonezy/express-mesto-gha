@@ -19,14 +19,6 @@ mongoose.connection.on('error', () => console.log('Бд сломалась - '))
 app.use(cookieParser());
 app.use(express.json());
 
-app.use((req, res, next) => {
-  req.user = {
-    _id: '64949815d186b037fc433f1c', // вставьте сюда _id созданного в предыдущем пункте пользователя
-  };
-
-  next();
-});
-
 app.use(router);
 
 app.use((err, req, res, next) => {

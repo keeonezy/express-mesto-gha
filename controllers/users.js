@@ -44,57 +44,57 @@ module.exports.getUserById = (req, res, next) => {
     });
 };
 
-module.exports.createUser = async (req, res, next) => {
-  const {
-    name, about, avatar, email, password,
-  } = req.body;
+// module.exports.createUser = async (req, res, next) => {
+//   const {
+//     name, about, avatar, email, password,
+//   } = req.body;
 
-  try {
-    // Соль для пароля. Создает уникальное значение хэша
-    const hashedPassword = await bcrypt.hash(String(password), 10);
-    const user = await User.create({
-      name, about, avatar, email, password: hashedPassword,
-    });
-
-    res.status(STATUS_CREATED).send({ user });
-  } catch (err) {
-    if (err.name === 'ValidationError') {
-      next(new BadRequestError('Не правильно переданы данные'));
-    } else if (err.code === 11000) {
-      next(new ConflictError('Пользователь с такой почтой уже зарегистрирован'));
-    } else {
-      next(err);
-    }
-  }
-};
-
-// module.exports.createUser = (req, res, next) => {
-//   bcrypt.hash(String(req.body.password), 10)
-//     .then((hash) => {
-//       const userData = {
-//         name: req.body.name,
-//         about: req.body.about,
-//         avatar: req.body.avatar,
-//         email: req.body.email,
-//         password: hash,
-//       };
-//       return User.create(userData);
-//     })
-//     .then(({
-//       name, about, avatar, email, _id,
-//     }) => res.status(STATUS_CREATED).send({
-//       name, about, avatar, email, _id,
-//     }))
-//     .catch((err) => {
-//       if (err.name === 'ValidationError') {
-//         next(new BadRequestError('Не правильно переданы данные'));
-//       } else if (err.code === 11000) {
-//         next(new ConflictError('Пользователь с такой почтой уже зарегистрирован'));
-//       } else {
-//         next(err);
-//       }
+//   try {
+//     // Соль для пароля. Создает уникальное значение хэша
+//     const hashedPassword = await bcrypt.hash(String(password), 10);
+//     const user = await User.create({
+//       name, about, avatar, email, password: hashedPassword,
 //     });
+
+//     res.status(STATUS_CREATED).send({ user });
+//   } catch (err) {
+//     if (err.name === 'ValidationError') {
+//       next(new BadRequestError('Не правильно переданы данные'));
+//     } else if (err.code === 11000) {
+//       next(new ConflictError('Пользователь с такой почтой уже зарегистрирован'));
+//     } else {
+//       next(err);
+//     }
+//   }
 // };
+
+module.exports.createUser = (req, res, next) => {
+  bcrypt.hash(String(req.body.password), 10)
+    .then((hash) => {
+      const userData = {
+        name: req.body.name,
+        about: req.body.about,
+        avatar: req.body.avatar,
+        email: req.body.email,
+        password: hash,
+      };
+      return User.create(userData);
+    })
+    .then(({
+      name, about, avatar, email, _id,
+    }) => res.status(STATUS_CREATED).send({
+      name, about, avatar, email, _id,
+    }))
+    .catch((err) => {
+      if (err.name === 'ValidationError') {
+        next(new BadRequestError('Не правильно переданы данные'));
+      } else if (err.code === 11000) {
+        next(new ConflictError('Пользователь с такой почтой уже зарегистрирован'));
+      } else {
+        next(err);
+      }
+    });
+};
 
 module.exports.login = (req, res, next) => {
   const { email, password } = req.body;
