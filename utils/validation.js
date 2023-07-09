@@ -24,9 +24,15 @@ module.exports.userUpdateValidator = celebrate({
   }),
 });
 
-module.exports.usersAvatarValidator = celebrate({
+module.exports.userAvatarValidator = celebrate({
   body: Joi.object().keys({
     avatar: Joi.string().required().pattern(/^https?:\/\/(www\.)?[a-z0-9\-._~:/?#[\]@!$&'()*+,;=]+#?$/i),
+  }),
+});
+
+module.exports.userIdValidator = celebrate({
+  params: Joi.object().keys({
+    id: Joi.string().required().hex().length(24),
   }),
 });
 
