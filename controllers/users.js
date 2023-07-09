@@ -28,7 +28,7 @@ module.exports.getUserInfo = (req, res, next) => {
 };
 
 module.exports.getUserById = (req, res, next) => {
-  User.findById(req.params.userId)
+  User.findById(req.params.id)
     .orFail(() => { throw new NotFoundError('Карточка для удаления не найдена'); })
     .then((user) => res.send(user))
     .catch((err) => {
