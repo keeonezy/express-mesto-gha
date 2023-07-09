@@ -17,7 +17,7 @@ module.exports.getUserInfo = (req, res, next) => {
     const user = User.findById(req.user._id)
       // Если не будет ничего найдено. Not Found не менять т.к коды будут не корректно работать
       .orFail(() => { throw new NotFoundError('Карточка для удаления не найдена'); });
-    res.send(user);
+    res.send({ user });
   } catch (err) {
     if (err.name === 'CastError') {
       next(new BadRequestError('Не правильно переданы данные'));
