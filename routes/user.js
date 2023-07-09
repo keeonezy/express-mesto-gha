@@ -6,7 +6,7 @@ const {
 
 router.get('/users', getUsers);
 router.get('/users/me', getUserInfo);
-router.get('/users/:userId', userIdValidator, getUserById);
+router.get('/users/:id', userIdValidator, getUserById);
 router.patch('/users/me', userUpdateValidator, updateUser);
 router.patch('/users/me/avatar', userAvatarValidator, updateUserAvatar);
 
