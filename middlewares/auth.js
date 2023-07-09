@@ -6,15 +6,15 @@ module.exports = (req, res, next) => {
   const token = authorization.replace('Bearer ', '');
 
   if (!token) {
-    return next(new UnauthorizedError('Need authentication'));
+    return next(new UnauthorizedError('Нужна авторизация'));
   }
 
-  let payload; // Полезная нагрузка (чем мы нагрузили наш запрос)
+  let payload;
 
   try {
     payload = jwt.verify(token, 'secret-key');
   } catch (err) {
-    return next(new UnauthorizedError('Need authentication'));
+    return next(new UnauthorizedError('Нужна авторизация'));
   }
 
   req.user = payload;
