@@ -56,11 +56,7 @@ module.exports.getUserInfo = (req, res, next) => {
     .orFail(() => { throw new NotFoundError('Пользователь не найден'); })
     .then((data) => res.send({ data }))
     .catch((err) => {
-      if (err.name === 'CastError') {
-        next(new BadRequestError('Не правильно переданы данные'));
-      } else {
-        next(err);
-      }
+      next(err);
     });
 };
 
@@ -69,11 +65,7 @@ module.exports.getUserById = (req, res, next) => {
     .orFail(() => { throw new NotFoundError('Пользователь не найден по id'); })
     .then((user) => res.send(user))
     .catch((err) => {
-      if (err.name === 'ValidationError') {
-        next(new BadRequestError('Не правильно переданы данные'));
-      } else {
-        next(err);
-      }
+      next(err);
     });
 };
 
