@@ -8,20 +8,19 @@ const ConflictError = require('../utils/status-409');
 
 module.exports.createUser = (req, res, next) => {
   bcrypt.hash(String(req.body.password), 10)
-    .then((hash) => {
-      const userData = {
-        name: req.body.name,
-        about: req.body.about,
-        avatar: req.body.avatar,
-        email: req.body.email,
-        password: hash,
-      };
-      return User.create(userData);
-    })
-    .then(({
-      name, about, avatar, email, _id,
-    }) => res.status(STATUS_CREATED).send({
-      name, about, avatar, email, _id,
+    .then((hash) => User.create({
+      name: req.body.name,
+      about: req.body.about,
+      avatar: req.body.avatar,
+      email: req.body.email,
+      password: hash,
+    }))
+    .then((user) => res.status(STATUS_CREATED).send({
+      email: user.email,
+      name: user.name,
+      about: user.about,
+      avatar: user.avatar,
+      _id: user._id,
     }))
     .catch((err) => {
       if (err.name === 'ValidationError') {
