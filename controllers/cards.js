@@ -1,3 +1,4 @@
+const mongoose = require('mongoose');
 const Card = require('../models/card');
 const { STATUS_CREATED } = require('../errors/responseStatus');
 const BadRequestError = require('../errors/status-400');
@@ -18,11 +19,9 @@ module.exports.createCard = (req, res, next) => {
     // 201 статус должен быть успешным
     .then((card) => res.status(STATUS_CREATED).send({ data: card }))
     .catch((err) => {
-      if (err.name === 'ValidationError') {
+      if (err instanceof mongoose.Error.ValidationError) {
         next(new BadRequestError('Не правильно переданы данные'));
-      } else {
-        next(err);
-      }
+      } else next(err);
     });
 };
 
@@ -38,11 +37,9 @@ module.exports.deleteCardById = (req, res, next) => {
     })
     .then((card) => res.send({ data: card }))
     .catch((err) => {
-      if (err.name === 'CastError') {
+      if (err instanceof mongoose.Error.CastError) {
         next(new BadRequestError('Не правильно переданы данные'));
-      } else {
-        next(err);
-      }
+      } else next(err);
     });
 };
 
@@ -55,11 +52,9 @@ module.exports.setLikeCard = (req, res, next) => {
     .orFail(() => { throw new NotFoundError('Карточка для лайка не найдена'); })
     .then((card) => res.send({ data: card }))
     .catch((err) => {
-      if (err.name === 'CastError') {
+      if (err instanceof mongoose.Error.CastError) {
         next(new BadRequestError('Не правильно переданы данные'));
-      } else {
-        next(err);
-      }
+      } else next(err);
     });
 };
 
@@ -72,10 +67,8 @@ module.exports.removeLikeCard = (req, res, next) => {
     .orFail(() => { throw new NotFoundError('Карточка для удаления лайка не найдена'); })
     .then((card) => res.send({ data: card }))
     .catch((err) => {
-      if (err.name === 'CastError') {
+      if (err instanceof mongoose.Error.CastError) {
         next(new BadRequestError('Не правильно переданы данные'));
-      } else {
-        next(err);
-      }
+      } else next(err);
     });
 };

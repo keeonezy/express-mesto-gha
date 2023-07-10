@@ -1,3 +1,4 @@
+const mongoose = require('mongoose');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const User = require('../models/user');
@@ -23,7 +24,7 @@ module.exports.createUser = (req, res, next) => {
       _id: user._id,
     }))
     .catch((err) => {
-      if (err.name === 'ValidationError') {
+      if (err instanceof mongoose.Error.ValidationError) {
         next(new BadRequestError('Не правильно переданы данные'));
       } else if (err.code === 11000) {
         next(new ConflictError('Пользователь с такой почтой уже зарегистрирован'));
@@ -64,7 +65,9 @@ module.exports.getUserById = (req, res, next) => {
     .orFail(() => { throw new NotFoundError('Пользователь не найден по id'); })
     .then((user) => res.send(user))
     .catch((err) => {
-      next(err);
+      if (err instanceof mongoose.Error.CastError) {
+        next(new BadRequestError('Не правильно переданы данные'));
+      } else next(err);
     });
 };
 
@@ -81,11 +84,9 @@ module.exports.updateUser = (req, res, next) => {
       }
     })
     .catch((err) => {
-      if (err.name === 'ValidationError') {
+      if (err instanceof mongoose.Error.ValidationError) {
         next(new BadRequestError('Не правильно переданы данные'));
-      } else {
-        next(err);
-      }
+      } else next(err);
     });
 };
 
@@ -102,10 +103,8 @@ module.exports.updateUserAvatar = (req, res, next) => {
       }
     })
     .catch((err) => {
-      if (err.name === 'ValidationError') {
+      if (err instanceof mongoose.Error.ValidationError) {
         next(new BadRequestError('Не правильно переданы данные'));
-      } else {
-        next(err);
-      }
+      } else next(err);
     });
 };
