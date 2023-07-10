@@ -1,8 +1,8 @@
 const Card = require('../models/card');
-const { STATUS_CREATED } = require('../utils/responseStatus');
-const BadRequestError = require('../utils/status-400');
-const ForbiddenError = require('../utils/status-403');
-const NotFoundError = require('../utils/status-404');
+const { STATUS_CREATED } = require('../errors/responseStatus');
+const BadRequestError = require('../errors/status-400');
+const ForbiddenError = require('../errors/status-403');
+const NotFoundError = require('../errors/status-404');
 
 module.exports.getCards = (req, res, next) => {
   Card

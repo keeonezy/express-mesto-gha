@@ -1,10 +1,10 @@
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const User = require('../models/user');
-const { STATUS_CREATED } = require('../utils/responseStatus');
-const BadRequestError = require('../utils/status-400');
-const NotFoundError = require('../utils/status-404');
-const ConflictError = require('../utils/status-409');
+const { STATUS_CREATED } = require('../errors/responseStatus');
+const BadRequestError = require('../errors/status-400');
+const NotFoundError = require('../errors/status-404');
+const ConflictError = require('../errors/status-409');
 
 module.exports.createUser = (req, res, next) => {
   bcrypt.hash(String(req.body.password), 10)

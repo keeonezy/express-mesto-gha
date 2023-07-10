@@ -5,15 +5,13 @@ const mongoose = require('mongoose');
 const cookieParser = require('cookie-parser');
 const { errors } = require('celebrate');
 const router = require('./routes');
+const { PORT, urlBD } = require('./config');
 
 // Создаем сервер
 const app = express();
 
-// Устанавливаем порт
-const { PORT = 3000 } = process.env;
-
-// Подключаемся к БД. localhost не работает с POST. Устанавливаем 127.0.0.1
-mongoose.connect('mongodb://127.0.0.1:27017/mestodb');
+// Подключаемся к БД
+mongoose.connect(urlBD);
 mongoose.connection.on('connected', () => console.log('Связь с БД установлена'));
 mongoose.connection.on('error', () => console.log('Бд сломалась - '));
 
