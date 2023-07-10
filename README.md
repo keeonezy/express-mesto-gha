@@ -21,15 +21,15 @@
 
 ## API проекта
 
-Регистрация пользователя: POST /signup 
-Логин пользователя: POST /signin 
-Получить всех пользователей: GET /users 
-Получить данные текущего пользователя: GET /users/me 
-Получить данные пользователя по id: GET /users/userID 
-Обновить данные текущего пользователя: PATCH /users/me 
-Обновить аватара текущего пользователя: PATCH /users/me/avatar 
-Добавление карточки: POST /cards 
-Получение всех карточек: GET /cards 
-Удаление карточки: DELETE /cards/cardID 
-Поставить лайк карточке: PUT /cards/cardID/likes 
-Удалить лайк у карточки: DELETE /cards/cardID/likes 
+Регистрация пользователя: POST /signup  
+Логин пользователя: POST /signin  
+Получить всех пользователей: GET /users  
+Получить данные текущего пользователя: GET /users/me  
+Получить данные пользователя по id: GET /users/userID  
+Обновить данные текущего пользователя: PATCH /users/me  
+Обновить аватара текущего пользователя: PATCH /users/me/avatar  
+Добавление карточки: POST /cards  
+Получение всех карточек: GET /cards  
+Удаление карточки: DELETE /cards/cardID  
+Поставить лайк карточке: PUT /cards/cardID/likes  
+Удалить лайк у карточки: DELETE /cards/cardID/likes  
